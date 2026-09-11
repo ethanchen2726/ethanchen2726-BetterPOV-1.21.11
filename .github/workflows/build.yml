@@ -74,11 +74,48 @@ jobs:
           java-version: "21"
 
       - name: Build Fabric mod
+        id: build
+        continue-on-error: true
         working-directory: source
         run: ./gradlew :spectatorplus-fabric:build --stacktrace
 
+      - name: Inspect Minecraft 1.21.11 mixin targets
+        if: steps.build.outcome == 'failure'
+        working-directory: source
+        shell: bash
+        run: |
+          set +e
+          echo "Mapped Minecraft jars:"
+          find ~/.gradle/caches/fabric-loom -type f -name '*.jar' -print 2>/dev/null | sort
+          mapfile -t jars < <(find ~/.gradle/caches/fabric-loom -type f -name '*.jar' 2>/dev/null)
+          classes=(
+            net.minecraft.client.gui.components.spectator.PlayerMenuItem
+            net.minecraft.client.renderer.GameRenderer
+            net.minecraft.client.renderer.ItemInHandRenderer
+            net.minecraft.client.gui.Gui
+            net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
+            net.minecraft.client.renderer.LevelRenderer
+            net.minecraft.client.renderer.ScreenEffectRenderer
+          )
+          for class_name in "${classes[@]}"; do
+            echo "===== $class_name ====="
+            found=0
+            for jar_path in "${jars[@]}"; do
+              if javap -p -classpath "$jar_path" "$class_name" > /tmp/betterpov-javap.txt 2>/dev/null; then
+                echo "JAR: $jar_path"
+                cat /tmp/betterpov-javap.txt
+                found=1
+                break
+              fi
+            done
+            if [[ $found -eq 0 ]]; then
+              echo "Class not found in mapped cache"
+            fi
+          done
+          exit 1
+
       - uses: actions/upload-artifact@v4
-        if: success()
+        if: steps.build.outcome == 'success'
         with:
           name: BetterPOV-Fabric-1.21.11
           path: source/fabric/build/libs/*.jar
