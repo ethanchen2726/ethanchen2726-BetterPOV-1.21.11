@@ -26,6 +26,8 @@ jobs:
           sed -i 's/^modmenu_version=.*/modmenu_version=17.0.0-beta.2/' fabric/gradle.properties
           sed -i 's/id("fabric-loom") version "1.8-SNAPSHOT"/id("fabric-loom") version "1.17-SNAPSHOT"/' fabric/build.gradle.kts
           sed -i 's/gradle-8.10.2-bin.zip/gradle-9.5.0-bin.zip/' gradle/wrapper/gradle-wrapper.properties
+          sed -i 's/this.setupSubproject("paper")/include("spectatorplus-paper"); project(":spectatorplus-paper").projectDir = file("paper")/' settings.gradle.kts
+          sed -i 's/this.setupSubproject("fabric")/include("spectatorplus-fabric"); project(":spectatorplus-fabric").projectDir = file("fabric")/' settings.gradle.kts
           chmod +x gradlew
 
       - uses: actions/setup-java@v5
