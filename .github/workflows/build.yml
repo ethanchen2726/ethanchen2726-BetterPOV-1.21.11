@@ -25,7 +25,7 @@ jobs:
           sed -i 's/^fabric_permissions_api_version=.*/fabric_permissions_api_version=0.3.3/' fabric/gradle.properties
           sed -i 's/^cloth_config_version=.*/cloth_config_version=21.11.153/' fabric/gradle.properties
           sed -i 's/^modmenu_version=.*/modmenu_version=17.0.0-beta.2/' fabric/gradle.properties
-          sed -i 's/id("fabric-loom") version "1.8-SNAPSHOT"/id("fabric-loom") version "1.17-SNAPSHOT"/' fabric/build.gradle.kts
+          sed -E -i 's/id\("fabric-loom"\) version "[^"]+"/id("fabric-loom") version "1.17-SNAPSHOT"/' fabric/build.gradle.kts
           python3 - <<'PY'
           from pathlib import Path
           path = Path("fabric/build.gradle.kts")
@@ -33,7 +33,7 @@ jobs:
           text = text.replace("loom {\n", 'loom {\n    mixin {\n        useLegacyMixinAp = true\n        defaultRefmapName = "spectatorplus.refmap.json"\n    }\n\n', 1)
           path.write_text(text, encoding="utf-8")
           PY
-          sed -i 's/gradle-8.10.2-bin.zip/gradle-9.5.0-bin.zip/' gradle/wrapper/gradle-wrapper.properties
+          sed -E -i 's#gradle-[0-9.]+-bin.zip#gradle-9.5.0-bin.zip#' gradle/wrapper/gradle-wrapper.properties
           sed -i 's/this.setupSubproject("paper")/include("spectatorplus-paper"); project(":spectatorplus-paper").projectDir = file("paper")/' settings.gradle.kts
           sed -i 's/this.setupSubproject("fabric")/include("spectatorplus-fabric"); project(":spectatorplus-fabric").projectDir = file("fabric")/' settings.gradle.kts
           chmod +x gradlew
