@@ -112,6 +112,7 @@ jobs:
           s = s.replace("this.renderBuffers.bufferSource(), packedLightCoords", "this.submitNodeStorage, packedLightCoords")
           p.write_text(s.replace("\\n                this.renderBuffers.bufferSource().endBatch();", ""))
           PY
+          sed -i '/this\.renderBuffers\.bufferSource()\.endBatch();/d' fabric/src/client/java/com/hpfxd/spectatorplus/fabric/client/mixin/GameRendererMixin.java
           find fabric/src -name '*.java' -print0 | xargs -0 sed -i 's/net\.minecraft\.resources\.ResourceLocation/net.minecraft.resources.Identifier/g; s/ResourceLocation\.parse/Identifier.parse/g'
           sed -i 's/target\.getInventory()\.selected/target.getInventory().getSelectedSlot()/g' fabric/src/main/java/com/hpfxd/spectatorplus/fabric/sync/packet/ClientboundSelectedSlotSyncPacket.java
           sed -i 's/super(level, pos, yRot, gameProfile);/super(level, gameProfile);/' fabric/src/main/java/com/hpfxd/spectatorplus/fabric/mixin/ServerPlayerMixin.java
