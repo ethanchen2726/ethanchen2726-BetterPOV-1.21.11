@@ -89,7 +89,7 @@ jobs:
           find ~/.gradle/caches/fabric-loom -type f -name '*.jar' -print 2>/dev/null | sort
           mapfile -t jars < <(find ~/.gradle/caches/fabric-loom -type f -name '*.jar' 2>/dev/null)
           classes=(
-            net.minecraft.client.gui.components.spectator.PlayerMenuItem
+            net.minecraft.client.gui.spectator.PlayerMenuItem
             net.minecraft.client.renderer.GameRenderer
             net.minecraft.client.renderer.ItemInHandRenderer
             net.minecraft.client.gui.Gui
@@ -112,6 +112,19 @@ jobs:
               echo "Class not found in mapped cache"
             fi
           done
+          mapped_jar="${jars[0]}"
+          for jar_path in "${jars[@]}"; do
+            if javap -p -classpath "$jar_path" net.minecraft.client.renderer.GameRenderer >/dev/null 2>&1; then
+              mapped_jar="$jar_path"
+              break
+            fi
+          done
+          echo "===== GameRenderer renderItemInHand bytecode ====="
+          javap -c -p -classpath "$mapped_jar" net.minecraft.client.renderer.GameRenderer |
+            sed -n '/private void renderItemInHand(/,/^  [a-zA-Z].*);$/p'
+          echo "===== ItemInHandRenderer render methods bytecode ====="
+          javap -c -p -classpath "$mapped_jar" net.minecraft.client.renderer.ItemInHandRenderer |
+            sed -n '/private void renderMapHand(/,/public void tick()/p'
           exit 1
 
       - uses: actions/upload-artifact@v4
