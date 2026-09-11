@@ -18,7 +18,7 @@ jobs:
       - name: Port build configuration
         working-directory: source
         run: |
-          sed -i 's/^version=.*/version=1.2.7+mc1.21.11-lunar-legacy-mixin/' gradle.properties
+          sed -i 's/^version=.*/version=1.2.8+mc1.21.11-lunar-refmap/' gradle.properties
           sed -i 's/^minecraft_version=.*/minecraft_version=1.21.11/' fabric/gradle.properties
           sed -i 's/^loader_version=.*/loader_version=0.19.3/' fabric/gradle.properties
           sed -i 's/^fabric_version=.*/fabric_version=0.141.6+1.21.11/' fabric/gradle.properties
@@ -26,6 +26,13 @@ jobs:
           sed -i 's/^cloth_config_version=.*/cloth_config_version=21.11.153/' fabric/gradle.properties
           sed -i 's/^modmenu_version=.*/modmenu_version=17.0.0-beta.2/' fabric/gradle.properties
           sed -i 's/id("fabric-loom") version "1.8-SNAPSHOT"/id("fabric-loom") version "1.17-SNAPSHOT"/' fabric/build.gradle.kts
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path("fabric/build.gradle.kts")
+          text = path.read_text(encoding="utf-8")
+          text = text.replace("loom {\n", 'loom {\n    mixin {\n        useLegacyMixinAp = true\n        defaultRefmapName = "spectatorplus.refmap.json"\n    }\n\n', 1)
+          path.write_text(text, encoding="utf-8")
+          PY
           sed -i 's/gradle-8.10.2-bin.zip/gradle-9.5.0-bin.zip/' gradle/wrapper/gradle-wrapper.properties
           sed -i 's/this.setupSubproject("paper")/include("spectatorplus-paper"); project(":spectatorplus-paper").projectDir = file("paper")/' settings.gradle.kts
           sed -i 's/this.setupSubproject("fabric")/include("spectatorplus-fabric"); project(":spectatorplus-fabric").projectDir = file("fabric")/' settings.gradle.kts
@@ -41,6 +48,16 @@ jobs:
           data["depends"]["minecraft"] = "1.21.11"
           data["suggests"]["cloth-config"] = ">=21.11.153"
           data["suggests"]["modmenu"] = ">=17.0.0-beta.2"
+          for mixin_path in (
+              "fabric/src/main/resources/spectatorplus.mixins.json",
+              "fabric/src/client/resources/spectatorplus.client.mixins.json",
+          ):
+              with open(mixin_path, encoding="utf-8") as mixin_fh:
+                  mixin_data = json.load(mixin_fh)
+              mixin_data["refmap"] = "spectatorplus.refmap.json"
+              with open(mixin_path, "w", encoding="utf-8") as mixin_fh:
+                  json.dump(mixin_data, mixin_fh, indent=2)
+                  mixin_fh.write("\\n")
           with open(path, "w", encoding="utf-8") as fh:
               json.dump(data, fh, indent=2)
               fh.write("\n")
