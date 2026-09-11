@@ -29,6 +29,10 @@ jobs:
           sed -i 's/this.setupSubproject("paper")/include("spectatorplus-paper"); project(":spectatorplus-paper").projectDir = file("paper")/' settings.gradle.kts
           sed -i 's/this.setupSubproject("fabric")/include("spectatorplus-fabric"); project(":spectatorplus-fabric").projectDir = file("fabric")/' settings.gradle.kts
           chmod +x gradlew
+          find fabric/src -name '*.java' -print0 | xargs -0 sed -i 's/net\.minecraft\.resources\.ResourceLocation/net.minecraft.resources.Identifier/g; s/ResourceLocation\.parse/Identifier.parse/g'
+          sed -i 's/target\.getInventory()\.selected/target.getInventory().getSelectedSlot()/g' fabric/src/main/java/com/hpfxd/spectatorplus/fabric/sync/packet/ClientboundSelectedSlotSyncPacket.java
+          sed -i 's/super(level, pos, yRot, gameProfile);/super(level, gameProfile);/' fabric/src/main/java/com/hpfxd/spectatorplus/fabric/mixin/ServerPlayerMixin.java
+          sed -i 's/for (final ItemStack stack : target.getInventory().items) {/for (int betterpovSlot = 0; betterpovSlot < target.getInventory().getContainerSize(); betterpovSlot++) { final ItemStack stack = target.getInventory().getItem(betterpovSlot);/' fabric/src/main/java/com/hpfxd/spectatorplus/fabric/mixin/ServerPlayerMixin.java
 
       - uses: actions/setup-java@v5
         with:
