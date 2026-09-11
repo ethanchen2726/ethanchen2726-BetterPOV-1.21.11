@@ -18,9 +18,9 @@ jobs:
       - name: Port build configuration
         working-directory: source
         run: |
-          sed -i 's/^version=.*/version=1.2.5+mc1.21.11-lunarfix/' gradle.properties
+          sed -i 's/^version=.*/version=1.2.6+mc1.21.11-lunar-legacy-mixin/' gradle.properties
           sed -i 's/^minecraft_version=.*/minecraft_version=1.21.11/' fabric/gradle.properties
-          sed -i 's/^loader_version=.*/loader_version=0.19.5/' fabric/gradle.properties
+          sed -i 's/^loader_version=.*/loader_version=0.19.3/' fabric/gradle.properties
           sed -i 's/^fabric_version=.*/fabric_version=0.141.6+1.21.11/' fabric/gradle.properties
           sed -i 's/^fabric_permissions_api_version=.*/fabric_permissions_api_version=0.3.3/' fabric/gradle.properties
           sed -i 's/^cloth_config_version=.*/cloth_config_version=21.11.153/' fabric/gradle.properties
