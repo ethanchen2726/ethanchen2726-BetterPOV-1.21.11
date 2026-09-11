@@ -89,6 +89,8 @@ jobs:
           data = json.loads(raw)
           data["client"] = [x for x in data["client"] if x not in ("GameRendererAccessor", "LivingEntityMixin")]
           p.write_text(json.dumps(data, indent=2) + chr(10))
+          (mixin / "GameRendererAccessor.java").unlink()
+          (mixin / "LivingEntityMixin.java").unlink()
 
           p = mixin / "ItemInHandRendererAccessor.java"
           s = p.read_text().replace("import net.minecraft.client.renderer.MultiBufferSource;", "import net.minecraft.client.renderer.SubmitNodeCollector;")
