@@ -13,12 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch SpectatorPlus source
-        run: git clone --depth 1 --branch mc/1.21.2 https://github.com/hpfxd/SpectatorPlus.git source
+        run: git clone --depth 1 --branch mc/1.21.4 https://github.com/hpfxd/SpectatorPlus.git source
 
       - name: Port build configuration
         working-directory: source
         run: |
-          sed -i 's/^version=.*/version=1.2.8+mc1.21.11-lunar-refmap/' gradle.properties
+          sed -i 's/^version=.*/version=1.2.9+mc1.21.11-port/' gradle.properties
           sed -i 's/^minecraft_version=.*/minecraft_version=1.21.11/' fabric/gradle.properties
           sed -i 's/^loader_version=.*/loader_version=0.19.3/' fabric/gradle.properties
           sed -i 's/^fabric_version=.*/fabric_version=0.141.6+1.21.11/' fabric/gradle.properties
