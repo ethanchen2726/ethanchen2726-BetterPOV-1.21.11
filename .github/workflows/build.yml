@@ -14,9 +14,9 @@ jobs:
     steps:
       - name: Fetch native SpectatorPlus 1.21.11 source
         run: |
-          git clone https://github.com/hpfxd/SpectatorPlus.git source
-          cd source
-          git checkout 945b1938450c07631b0eb8b0d878b09c4218156e
+          curl -fsSL https://github.com/hpfxd/SpectatorPlus/archive/945b1938450c07631b0eb8b0d878b09c4218156e.zip -o spectatorplus.zip
+          unzip -q spectatorplus.zip
+          mv SpectatorPlus-945b1938450c07631b0eb8b0d878b09c4218156e source
 
       - uses: actions/setup-java@v5
         with:
