@@ -28,7 +28,7 @@ jobs:
         working-directory: source
         run: |
           chmod +x gradlew
-          ./gradlew :fabric:fabric-core:build :paper:paper-1.21.11:build --stacktrace
+          ./gradlew :fabric:fabric-core:build :paper:paper-1.21.11:shadowJar --stacktrace
 
       - name: Prepare BetterPOV files
         working-directory: source
