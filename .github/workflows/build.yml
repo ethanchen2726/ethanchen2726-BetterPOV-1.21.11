@@ -57,7 +57,7 @@ jobs:
               mixin_data["refmap"] = "spectatorplus.refmap.json"
               with open(mixin_path, "w", encoding="utf-8") as mixin_fh:
                   json.dump(mixin_data, mixin_fh, indent=2)
-                  mixin_fh.write("\\n")
+                  mixin_fh.write(chr(10))
           with open(path, "w", encoding="utf-8") as fh:
               json.dump(data, fh, indent=2)
               fh.write("\n")
