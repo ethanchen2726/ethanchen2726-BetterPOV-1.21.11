@@ -23,6 +23,72 @@ jobs:
         run: |
           echo 'cGFja2FnZSBjb20uaHBmeGQuc3BlY3RhdG9ycGx1cy5mYWJyaWMuc3luYzsKCmltcG9ydCBpby5uZXR0eS5oYW5kbGVyLmNvZGVjLkRlY29kZXJFeGNlcHRpb247CmltcG9ydCBpby5uZXR0eS5oYW5kbGVyLmNvZGVjLkVuY29kZXJFeGNlcHRpb247CmltcG9ydCBuZXQubWluZWNyYWZ0Lm5idC5Db21wb3VuZFRhZzsKaW1wb3J0IG5ldC5taW5lY3JhZnQubmJ0Lk5idEFjY291bnRlcjsKaW1wb3J0IG5ldC5taW5lY3JhZnQubmJ0Lk5idElvOwppbXBvcnQgbmV0Lm1pbmVjcmFmdC5uYnQuTmJ0T3BzOwppbXBvcnQgbmV0Lm1pbmVjcmFmdC5uZXR3b3JrLlJlZ2lzdHJ5RnJpZW5kbHlCeXRlQnVmOwppbXBvcnQgbmV0Lm1pbmVjcmFmdC53b3JsZC5pdGVtLkl0ZW1TdGFjazsKaW1wb3J0IG9yZy5qZXRicmFpbnMuYW5ub3RhdGlvbnMuTm90TnVsbDsKCmltcG9ydCBqYXZhLmlvLkJ5dGVBcnJheUlucHV0U3RyZWFtOwoKcHVibGljIGZpbmFsIGNsYXNzIEN1c3RvbVBhY2tldENvZGVjcyB7CiAgICBwcml2YXRlIEN1c3RvbVBhY2tldENvZGVjcygpIHsKICAgIH0KCiAgICBwdWJsaWMgc3RhdGljIEl0ZW1TdGFja1tdIHJlYWRJdGVtcyhSZWdpc3RyeUZyaWVuZGx5Qnl0ZUJ1ZiBidWYpIHsKICAgICAgICBmaW5hbCBpbnQgbGVuID0gYnVmLnJlYWRJbnQoKTsKICAgICAgICBmaW5hbCBJdGVtU3RhY2tbXSBpdGVtcyA9IG5ldyBJdGVtU3RhY2tbbGVuXTsKCiAgICAgICAgZm9yIChpbnQgc2xvdCA9IDA7IHNsb3QgPCBsZW47IHNsb3QrKykgewogICAgICAgICAgICBpdGVtc1tzbG90XSA9IGJ1Zi5yZWFkQm9vbGVhbigpID8gcmVhZEl0ZW0oYnVmKSA6IG51bGw7CiAgICAgICAgfQoKICAgICAgICByZXR1cm4gaXRlbXM7CiAgICB9CgogICAgcHVibGljIHN0YXRpYyB2b2lkIHdyaXRlSXRlbXMoUmVnaXN0cnlGcmllbmRseUJ5dGVCdWYgYnVmLCBJdGVtU3RhY2tbXSBpdGVtcykgewogICAgICAgIGJ1Zi53cml0ZUludChpdGVtcy5sZW5ndGgpOwoKICAgICAgICBmb3IgKGZpbmFsIEl0ZW1TdGFjayBpdGVtIDogaXRlbXMpIHsKICAgICAgICAgICAgYnVmLndyaXRlQm9vbGVhbihpdGVtICE9IG51bGwpOwogICAgICAgICAgICBpZiAoaXRlbSAhPSBudWxsKSB7CiAgICAgICAgICAgICAgICBJdGVtU3RhY2suT1BUSU9OQUxfU1RSRUFNX0NPREVDLmVuY29kZShidWYsIGl0ZW0pOwogICAgICAgICAgICB9CiAgICAgICAgfQogICAgfQoKICAgIHB1YmxpYyBzdGF0aWMgSXRlbVN0YWNrIHJlYWRJdGVtKFJlZ2lzdHJ5RnJpZW5kbHlCeXRlQnVmIGJ1ZikgewogICAgICAgIHRyeSB7CiAgICAgICAgICAgIGZpbmFsIGludCBsZW5ndGggPSBidWYucmVhZEludCgpOwogICAgICAgICAgICBpZiAobGVuZ3RoID09IDApIHsKICAgICAgICAgICAgICAgIHJldHVybiBJdGVtU3RhY2suRU1QVFk7CiAgICAgICAgICAgIH0KICAgICAgICAgICAgaWYgKGxlbmd0aCA8IDAgfHwgbGVuZ3RoID4gMTYgKiAxMDI0ICogMTAyNCkgewogICAgICAgICAgICAgICAgdGhyb3cgbmV3IERlY29kZXJFeGNlcHRpb24oIkludmFsaWQgc2VyaWFsaXplZCBJdGVtU3RhY2sgbGVuZ3RoOiAiICsgbGVuZ3RoKTsKICAgICAgICAgICAgfQoKICAgICAgICAgICAgZmluYWwgYnl0ZVtdIGRhdGEgPSBuZXcgYnl0ZVtsZW5ndGhdOwogICAgICAgICAgICBidWYucmVhZEJ5dGVzKGRhdGEpOwogICAgICAgICAgICBmaW5hbCBDb21wb3VuZFRhZyB0YWcgPSBOYnRJby5yZWFkQ29tcHJlc3NlZCgKICAgICAgICAgICAgICAgICAgICBuZXcgQnl0ZUFycmF5SW5wdXRTdHJlYW0oZGF0YSksCiAgICAgICAgICAgICAgICAgICAgTmJ0QWNjb3VudGVyLnVubGltaXRlZEhlYXAoKQogICAgICAgICAgICApOwogICAgICAgICAgICByZXR1cm4gSXRlbVN0YWNrLkNPREVDLnBhcnNlKAogICAgICAgICAgICAgICAgICAgIGJ1Zi5yZWdpc3RyeUFjY2VzcygpLmNyZWF0ZVNlcmlhbGl6YXRpb25Db250ZXh0KE5idE9wcy5JTlNUQU5DRSksCiAgICAgICAgICAgICAgICAgICAgdGFnCiAgICAgICAgICAgICkuZ2V0T3JUaHJvdygpOwogICAgICAgIH0gY2F0Y2ggKEV4Y2VwdGlvbiBlKSB7CiAgICAgICAgICAgIHRocm93IG5ldyBEZWNvZGVyRXhjZXB0aW9uKCJGYWlsZWQgdG8gcmVhZCBQYXBlciBJdGVtU3RhY2siLCBlKTsKICAgICAgICB9CiAgICB9CgogICAgcHVibGljIHN0YXRpYyB2b2lkIHdyaXRlSXRlbShSZWdpc3RyeUZyaWVuZGx5Qnl0ZUJ1ZiBidWYsIEBOb3ROdWxsIEl0ZW1TdGFjayBpdGVtKSB7CiAgICAgICAgdHJ5IHsKICAgICAgICAgICAgSXRlbVN0YWNrLk9QVElPTkFMX1NUUkVBTV9DT0RFQy5lbmNvZGUoYnVmLCBpdGVtKTsKICAgICAgICB9IGNhdGNoIChFeGNlcHRpb24gZSkgewogICAgICAgICAgICB0aHJvdyBuZXcgRW5jb2RlckV4Y2VwdGlvbigiRmFpbGVkIHRvIHdyaXRlIEl0ZW1TdGFjayIsIGUpOwogICAgICAgIH0KICAgIH0KfQo=' | base64 --decode > fabric/fabric-core/src/main/java/com/hpfxd/spectatorplus/fabric/sync/CustomPacketCodecs.java
 
+      - name: Fix synced inventory opening and screen crash
+        working-directory: source
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          controller = Path("fabric/fabric-core/src/client/java/com/hpfxd/spectatorplus/fabric/client/sync/screen/ScreenSyncController.java")
+          text = controller.read_text()
+          old = """        // Also update global armorItems for convenience
+          if (syncData.armorItems != null && items.length >= 40) {
+              for (int slot = 36; slot < 40; slot++) {
+                  final ItemStack item = items[slot];
+                  if (item != null) {
+                      syncData.armorItems.set(slot - 36, item);
+                  }
+              }
+          }
+      }
+  """
+          new = """        // Also update global armorItems for convenience
+          if (syncData.armorItems != null && items.length >= 40) {
+              for (int slot = 36; slot < 40; slot++) {
+                  final ItemStack item = items[slot];
+                  if (item != null) {
+                      syncData.armorItems.set(slot - 36, item);
+                  }
+              }
+          }
+
+          // The screen-sync packet arrives before the complete inventory snapshot.
+          // Retry opening here now that all 41 inventory slots are available.
+          if (isPendingOpen && syncData.screen.isSurvivalInventory) {
+              final Minecraft mc = Minecraft.getInstance();
+              mc.execute(() -> {
+                  if (isPendingOpen && syncData != null && syncData.screen != null
+                          && syncData.screen.isSurvivalInventory) {
+                      final Player player = SpecUtil.getCameraPlayer(mc);
+                      if (player != null && createInventory(player)) {
+                          openPlayerInventory(mc);
+                      }
+                  }
+              });
+          }
+      }
+  """
+          if old not in text:
+              raise SystemExit("ScreenSyncController insertion point not found")
+          controller.write_text(text.replace(old, new))
+
+          mixin = Path("fabric/fabric-core/src/client/java/com/hpfxd/spectatorplus/fabric/client/mixin/screen/AbstractContainerScreenMixin.java")
+          text = mixin.read_text()
+          old = """        var syncData = ClientSyncController.syncData;
+          var containerItems = syncData.screen.containerItems;
+  """
+          new = """        var syncData = ClientSyncController.syncData;
+          // Survival inventory screens do not have separate container items.
+          if (syncData == null || syncData.screen == null || syncData.screen.containerItems == null) {
+              return;
+          }
+          var containerItems = syncData.screen.containerItems;
+  """
+          if old not in text:
+              raise SystemExit("AbstractContainerScreenMixin insertion point not found")
+          mixin.write_text(text.replace(old, new))
+          PY
+
       - name: Add BetterPOV automatic spectator switching
         working-directory: source
         run: |
