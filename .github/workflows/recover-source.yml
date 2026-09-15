@@ -1,0 +1,53 @@
+name: Recover BetterPOV 1.21.11 Source
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/recover-source.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Replay source reconstruction steps
+        run: |
+          ruby <<'RUBY'
+          require 'yaml'
+          require 'open3'
+
+          workflow = YAML.load_file('.github/workflows/build.yml')
+          steps = workflow.fetch('jobs').fetch('build').fetch('steps')
+
+          steps.each do |step|
+            next unless step.is_a?(Hash) && step['run']
+            name = step['name'].to_s
+            break if name.match?(/build|stage|artifact/i)
+
+            puts "==> #{name.empty? ? 'unnamed run step' : name}"
+            cwd = step['working-directory'] || Dir.pwd
+            cwd = File.expand_path(cwd, Dir.pwd) unless cwd.start_with?('/')
+            env = ENV.to_h.merge((step['env'] || {}).transform_values(&:to_s))
+            stdout, stderr, status = Open3.capture3(env, '/bin/bash', '-lc', step['run'], chdir: cwd)
+            print stdout
+            warn stderr unless stderr.empty?
+            raise "Step failed: #{name}" unless status.success?
+          end
+          RUBY
+
+      - name: Package recovered source
+        run: |
+          test -d source
+          zip -qr BetterPOV-1.21.11-recovered-source.zip source
+          ls -lh BetterPOV-1.21.11-recovered-source.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BetterPOV-1.21.11-recovered-source
+          path: BetterPOV-1.21.11-recovered-source.zip
+          if-no-files-found: error
