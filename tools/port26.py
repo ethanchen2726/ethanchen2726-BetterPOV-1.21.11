@@ -62,6 +62,13 @@ s = s.replace('modImplementation("com.terraformersmc:modmenu:${property("modmenu
 s = re.sub(r'\n\s*remapJar \{.*?\n\s*\}\n', '\n', s, flags=re.S)
 p.write_text(s)
 
+# 26.2 Loom expects access wideners in the official namespace.
+# SpectatorPlus already uses Mojang/official class and member names, so update the namespace header.
+p = root/'fabric/fabric-core/src/main/resources/spectatorplus.accesswidener'
+s = p.read_text()
+s = s.replace('accessWidener v2 named', 'accessWidener v2 official')
+p.write_text(s)
+
 # Metadata for 26.2
 p = root/'fabric/fabric-core/src/main/resources/fabric.mod.json'
 data = json.loads(p.read_text())
