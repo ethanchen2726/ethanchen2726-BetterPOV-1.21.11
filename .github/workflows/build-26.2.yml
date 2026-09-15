@@ -1,0 +1,90 @@
+name: Build BetterPOV 26.2 Port
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ port-26.2 ]
+    paths:
+      - 'tools/port26.py'
+      - '.github/workflows/build-26.2.yml'
+      - 'PORT_26_2.md'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: port-26.2
+
+      - name: Download recovered BetterPOV 1.21.11 source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p recovery
+          gh run download 34950818737 --repo "$GITHUB_REPOSITORY" --name BetterPOV-1.21.11-recovered-source --dir recovery
+          unzip -q recovery/BetterPOV-1.21.11-recovered-source.zip -d .
+          test -d source
+
+      - name: Apply 26.2 mechanical port
+        run: python3 tools/port26.py
+
+      - name: Set up Java 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Build Paper 26.2 and Fabric 26.2
+        id: compile
+        working-directory: source
+        shell: bash
+        run: |
+          chmod +x gradlew
+          set +e
+          ./gradlew --no-daemon :paper:paper-26.2:build --stacktrace 2>&1 | tee ../paper-26.2-build.log
+          PAPER_STATUS=${PIPESTATUS[0]}
+          ./gradlew --no-daemon :fabric:fabric-26.2:build --stacktrace 2>&1 | tee ../fabric-26.2-build.log
+          FABRIC_STATUS=${PIPESTATUS[0]}
+          echo "$PAPER_STATUS" > ../paper.status
+          echo "$FABRIC_STATUS" > ../fabric.status
+          exit 0
+
+      - name: Stage successful JARs
+        if: always()
+        run: |
+          mkdir -p dist
+          find source/paper -path '*/build/libs/*.jar' -type f -size +10k -print -exec cp {} dist/ \; || true
+          find source/fabric -path '*/build/libs/*.jar' -type f -size +10k -print -exec cp {} dist/ \; || true
+          ls -lh dist || true
+
+      - name: Package current 26.2 source
+        if: always()
+        run: zip -qr BetterPOV-26.2-port-source.zip source
+
+      - name: Upload port diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: BetterPOV-26.2-port-diagnostics
+          path: |
+            paper-26.2-build.log
+            fabric-26.2-build.log
+            paper.status
+            fabric.status
+            BetterPOV-26.2-port-source.zip
+            dist/*
+          if-no-files-found: warn
+
+      - name: Fail if compilation failed
+        if: always()
+        run: |
+          PAPER_STATUS=$(cat paper.status)
+          FABRIC_STATUS=$(cat fabric.status)
+          echo "Paper status: $PAPER_STATUS"
+          echo "Fabric status: $FABRIC_STATUS"
+          test "$PAPER_STATUS" = "0" && test "$FABRIC_STATUS" = "0"
