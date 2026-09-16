@@ -147,6 +147,22 @@ text = re.sub(r'\n    @Inject\(method = "renderItemInHand".*?\n    @Unique\n    
 text = text.replace(' && !this.minecraft.options.hideGui', '')
 p.write_text(text)
 
+# Finish 26.2 player messaging and HUD access migration.
+p = client_root/'com/hpfxd/spectatorplus/fabric/client/SpectatorKeybinds.java'
+text = p.read_text()
+text = text.replace('mc.player.displayClientMessage(', 'mc.player.sendOverlayMessage(')
+text = text.replace('.withStyle(ChatFormatting.GRAY), true);', '.withStyle(ChatFormatting.GRAY));')
+text = text.replace('.withStyle(ChatFormatting.RED), true);', '.withStyle(ChatFormatting.RED));')
+text = text.replace('mc.hud.getSpectatorGui()', 'mc.getSpectatorGui()')
+text = text.replace('mc.hud.getTabList().getNameForDisplay(target)',
+                    '(target.getTabListDisplayName() != null ? target.getTabListDisplayName() : Component.literal(target.getProfile().name()))')
+p.write_text(text)
+
+# Keep the Java class name matched to its existing source file.
+p = client_root/'com/hpfxd/spectatorplus/fabric/client/mixin/ExperienceBarRendererMixin.java'
+text = p.read_text().replace('public class ExperienceBarMixin', 'public class ExperienceBarRendererMixin')
+p.write_text(text)
+
 # 26.2 Loom expects access wideners in the official namespace.
 # SpectatorPlus already uses Mojang/official class and member names, so update the namespace header.
 p = root/'fabric/fabric-core/src/main/resources/spectatorplus.accesswidener'
