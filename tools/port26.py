@@ -133,8 +133,13 @@ text = p.read_text().replace('ExperienceBarRenderer', 'ExperienceBar').replace('
 p.write_text(text)
 
 # MultiBufferSource no longer exists; the only reference was in commented code.
+# LevelRenderer also no longer stores Minecraft in a field; the stale shadow was
+# only referenced by that commented code and would abort mixin application.
 p = client_root/'com/hpfxd/spectatorplus/fabric/client/mixin/LevelRendererMixin.java'
 text = p.read_text().replace('import net.minecraft.client.renderer.MultiBufferSource;\n', '')
+text = text.replace('import org.spongepowered.asm.mixin.Final;\n', '')
+text = text.replace('import org.spongepowered.asm.mixin.Shadow;\n', '')
+text = text.replace('    @Shadow @Final private Minecraft minecraft;\n\n', '')
 p.write_text(text)
 
 # The 26.2 hand renderer is a submit-node pipeline. Disable the old manual arm
