@@ -54,13 +54,47 @@ jobs:
           echo "$FABRIC_STATUS" > ../fabric.status
           exit 0
 
-      - name: Stage successful JARs
+      - name: Smoke-test Fabric 26.2 client startup
+        if: always()
+        working-directory: source
+        shell: bash
+        run: |
+          if [ "$(cat ../fabric.status)" != "0" ]; then
+            echo "Skipping startup test because Fabric compilation failed"
+            exit 0
+          fi
+          set +e
+          timeout 120s xvfb-run -a ./gradlew --no-daemon :fabric:fabric-26.2:runClient 2>&1 | tee ../fabric-26.2-smoke.log
+          SMOKE_STATUS=${PIPESTATUS[0]}
+          set -e
+          echo "$SMOKE_STATUS" > ../fabric-smoke.status
+          if [ "$SMOKE_STATUS" != "0" ] && [ "$SMOKE_STATUS" != "124" ]; then
+            echo "Fabric client exited unexpectedly with status $SMOKE_STATUS"
+            exit "$SMOKE_STATUS"
+          fi
+          if grep -Eiq 'MixinTransformerError|MixinApplyError|InvalidInjectionException|Could not execute entrypoint|Exception in thread "Render thread"|Failed to start Minecraft' ../fabric-26.2-smoke.log; then
+            echo "Fabric client log contains a fatal startup or mixin error"
+            exit 1
+          fi
+
+      - name: Stage and validate release JARs
         if: always()
         run: |
           mkdir -p dist
-          find source/paper -path '*/build/libs/*.jar' -type f -size +10k -print -exec cp {} dist/ \; || true
-          find source/fabric -path '*/build/libs/*.jar' -type f -size +10k -print -exec cp {} dist/ \; || true
-          ls -lh dist || true
+          PAPER_JAR=$(find source/paper/paper-core/build/libs -maxdepth 1 -type f -name '*.jar' -size +10k | head -1)
+          FABRIC_JAR=$(find source/fabric/fabric-core/build/libs -maxdepth 1 -type f -name '*mc26.2.jar' -size +10k | head -1)
+          test -n "$PAPER_JAR"
+          test -n "$FABRIC_JAR"
+          cp "$PAPER_JAR" dist/BetterPOV-Paper-26.2-1.4.0.jar
+          cp "$FABRIC_JAR" dist/BetterPOV-Fabric-26.2-1.4.0.jar
+          unzip -p dist/BetterPOV-Fabric-26.2-1.4.0.jar fabric.mod.json | grep -q '"minecraft":"26.2"'
+          unzip -p dist/BetterPOV-Fabric-26.2-1.4.0.jar fabric.mod.json | grep -q '"java":">=25"'
+          unzip -l dist/BetterPOV-Fabric-26.2-1.4.0.jar | grep -q 'spectatorplus.client.mixins.json'
+          unzip -l dist/BetterPOV-Fabric-26.2-1.4.0.jar | grep -q 'ScreenSyncController.class'
+          unzip -p dist/BetterPOV-Paper-26.2-1.4.0.jar paper-plugin.yml | grep -q 'api-version: "26.2"'
+          unzip -p dist/BetterPOV-Paper-26.2-1.4.0.jar paper-plugin.yml | grep -q 'betterpov.spectate'
+          sha256sum dist/*.jar | tee dist/SHA256SUMS.txt
+          ls -lh dist
 
       - name: Package current 26.2 source
         if: always()
@@ -76,9 +110,22 @@ jobs:
             fabric-26.2-build.log
             paper.status
             fabric.status
+            fabric-smoke.status
+            fabric-26.2-smoke.log
             BetterPOV-26.2-port-source.zip
             dist/*
           if-no-files-found: warn
+
+      - name: Upload release JARs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: BetterPOV-26.2-Fabric-and-Paper
+          path: |
+            dist/BetterPOV-Fabric-26.2-1.4.0.jar
+            dist/BetterPOV-Paper-26.2-1.4.0.jar
+            dist/SHA256SUMS.txt
+          if-no-files-found: error
 
       - name: Fail if compilation failed
         if: always()
