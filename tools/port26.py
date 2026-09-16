@@ -73,6 +73,80 @@ p = root/'fabric/fabric-core/src/main/java/com/hpfxd/spectatorplus/fabric/sync/h
 s = p.read_text().replace('ServerTickEvents.END_WORLD_TICK', 'ServerTickEvents.END_LEVEL_TICK')
 p.write_text(s)
 
+# Minecraft/Fabric 26.2 client GUI, key mapping, and screen API migration.
+client_root = root/'fabric/fabric-core/src/client/java'
+for p in client_root.rglob('*.java'):
+    text = p.read_text()
+    text = text.replace('net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper',
+                        'net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper')
+    text = text.replace('KeyBindingHelper.registerKeyBinding', 'KeyMappingHelper.registerKeyMapping')
+    text = text.replace('GuiGraphics', 'GuiGraphicsExtractor')
+    text = text.replace('ClickType', 'ContainerInput')
+    text = text.replace('mc.setScreen(', 'mc.gui.setScreen(')
+    text = text.replace('mc.screen', 'mc.gui.screen()')
+    text = text.replace('mc.gui.getTabList()', 'mc.hud.getTabList()')
+    text = text.replace('mc.gui.getSpectatorGui()', 'mc.hud.getSpectatorGui()')
+    text = re.sub(r'\.displayClientMessage\((.*?), true\);', r'.sendOverlayMessage(\1);', text)
+    p.write_text(text)
+
+# HUD rendering moved from Gui to Hud and render extraction was renamed.
+p = client_root/'com/hpfxd/spectatorplus/fabric/client/mixin/GuiMixin.java'
+text = p.read_text()
+text = text.replace('import net.minecraft.client.gui.Gui;', 'import net.minecraft.client.gui.Hud;')
+text = text.replace('@Mixin(Gui.class)', '@Mixin(Hud.class)')
+text = text.replace('Gui instance', 'Hud instance')
+text = text.replace('Lnet/minecraft/client/gui/Gui;', 'Lnet/minecraft/client/gui/Hud;')
+for old, new in {
+    'renderEffects': 'extractEffects',
+    'renderCameraOverlays': 'extractCameraOverlays',
+    'renderHotbarAndDecorations': 'extractHotbarAndDecorations',
+    'renderItemHotbar': 'extractItemHotbar',
+    'renderCrosshair': 'extractCrosshair',
+    'renderSelectedItemName': 'extractSelectedItemName',
+    'renderPlayerHealth': 'extractPlayerHealth',
+    'renderFood': 'extractFood',
+}.items():
+    text = text.replace(old, new)
+text = text.replace(' && !this.minecraft.options.hideGui', '')
+text = text.replace('.renderItem(', '.item(')
+text = text.replace('.drawString(', '.text(')
+p.write_text(text)
+
+# Screen extraction method renames.
+p = client_root/'com/hpfxd/spectatorplus/fabric/client/mixin/screen/AbstractContainerScreenMixin.java'
+text = p.read_text()
+text = text.replace('renderFloatingItem', 'extractFloatingItem')
+text = text.replace('renderContents', 'extractContents')
+text = text.replace('renderLabels', 'extractLabels')
+p.write_text(text)
+
+# The 26.2 inventory entity preview has a new render-state signature. Keep the
+# synced inventory implementation and let vanilla render its normal preview for now.
+p = client_root/'com/hpfxd/spectatorplus/fabric/client/mixin/screen/InventoryScreenMixin.java'
+text = p.read_text()
+text = re.sub(r'\n    @Redirect\(\n            method = "renderBg.*?\n    \}\n(?=\})', '\n', text, flags=re.S)
+p.write_text(text)
+
+# ExperienceBarRenderer was renamed and its extraction method changed.
+p = client_root/'com/hpfxd/spectatorplus/fabric/client/mixin/ExperienceBarRendererMixin.java'
+text = p.read_text().replace('ExperienceBarRenderer', 'ExperienceBar').replace('renderBackground', 'extractBackground')
+p.write_text(text)
+
+# MultiBufferSource no longer exists; the only reference was in commented code.
+p = client_root/'com/hpfxd/spectatorplus/fabric/client/mixin/LevelRendererMixin.java'
+text = p.read_text().replace('import net.minecraft.client.renderer.MultiBufferSource;\n', '')
+p.write_text(text)
+
+# The 26.2 hand renderer is a submit-node pipeline. Disable the old manual arm
+# submission while retaining the camera bob/movement synchronization below it.
+p = client_root/'com/hpfxd/spectatorplus/fabric/client/mixin/GameRendererMixin.java'
+text = p.read_text()
+text = text.replace('    @Shadow @Final private LightTexture lightTexture;\n', '')
+text = text.replace('    @Shadow @Final private RenderBuffers renderBuffers;\n', '')
+text = re.sub(r'\n    @Inject\(method = "renderItemInHand".*?\n    @Unique\n    private static ItemInHandRenderer\.HandRenderSelection evaluateWhichHandsToRender.*?\n    \}\n\n    @Inject\(method = "tick\(\)V"', '\n\n    @Inject(method = "tick()V"', text, flags=re.S)
+text = text.replace(' && !this.minecraft.options.hideGui', '')
+p.write_text(text)
+
 # 26.2 Loom expects access wideners in the official namespace.
 # SpectatorPlus already uses Mojang/official class and member names, so update the namespace header.
 p = root/'fabric/fabric-core/src/main/resources/spectatorplus.accesswidener'
