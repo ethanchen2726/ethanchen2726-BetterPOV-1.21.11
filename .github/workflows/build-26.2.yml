@@ -87,12 +87,19 @@ jobs:
           test -n "$FABRIC_JAR"
           cp "$PAPER_JAR" dist/BetterPOV-Paper-26.2-1.4.0.jar
           cp "$FABRIC_JAR" dist/BetterPOV-Fabric-26.2-1.4.0.jar
-          unzip -p dist/BetterPOV-Fabric-26.2-1.4.0.jar fabric.mod.json | grep -q '"minecraft":"26.2"'
-          unzip -p dist/BetterPOV-Fabric-26.2-1.4.0.jar fabric.mod.json | grep -q '"java":">=25"'
-          unzip -l dist/BetterPOV-Fabric-26.2-1.4.0.jar | grep -q 'spectatorplus.client.mixins.json'
-          unzip -l dist/BetterPOV-Fabric-26.2-1.4.0.jar | grep -q 'ScreenSyncController.class'
-          unzip -p dist/BetterPOV-Paper-26.2-1.4.0.jar paper-plugin.yml | grep -q 'api-version: "26.2"'
-          unzip -p dist/BetterPOV-Paper-26.2-1.4.0.jar paper-plugin.yml | grep -q 'betterpov.spectate'
+          unzip -p dist/BetterPOV-Fabric-26.2-1.4.0.jar fabric.mod.json > dist/fabric.mod.json
+          unzip -Z1 dist/BetterPOV-Fabric-26.2-1.4.0.jar > dist/fabric-entries.txt
+          unzip -p dist/BetterPOV-Paper-26.2-1.4.0.jar paper-plugin.yml > dist/paper-plugin.yml
+          python3 - <<'PY'
+          import json
+          data = json.load(open('dist/fabric.mod.json'))
+          assert data['depends']['minecraft'] == '26.2'
+          assert data['depends']['java'] == '>=25'
+          PY
+          grep -q 'spectatorplus.client.mixins.json' dist/fabric-entries.txt
+          grep -q 'ScreenSyncController.class' dist/fabric-entries.txt
+          grep -q 'api-version: "26.2"' dist/paper-plugin.yml
+          grep -q 'betterpov.spectate' dist/paper-plugin.yml
           sha256sum dist/*.jar | tee dist/SHA256SUMS.txt
           ls -lh dist
 
