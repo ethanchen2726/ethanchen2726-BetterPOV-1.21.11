@@ -193,7 +193,7 @@ p.write_text(text)
 # The old manual arm submit path is disabled above; do not apply its stale accessor.
 p = root/'fabric/fabric-core/src/client/resources/spectatorplus.client.mixins.json'
 data = json.loads(p.read_text())
-data['client'] = [name for name in data['client'] if name != 'ItemInHandRendererAccessor']
+data['client'] = [name for name in data['client'] if name not in {'ItemInHandRendererAccessor', 'GameRendererMixin'}]
 p.write_text(json.dumps(data, indent=2) + '\n')
 
 # 26.2 Loom expects access wideners in the official namespace.
