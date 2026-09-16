@@ -182,6 +182,14 @@ text = text.replace('private boolean spectatorplus$requestSpectatorInventoryOpen
                     'private boolean spectatorplus$requestSpectatorInventoryOpen(Gui instance, Screen guiScreen)')
 p.write_text(text)
 
+# Remaining AbstractContainerScreen render methods use extract* names in 26.2.
+p = client_root/'com/hpfxd/spectatorplus/fabric/client/mixin/screen/AbstractContainerScreenMixin.java'
+text = p.read_text()
+text = text.replace('renderTooltip', 'extractTooltip')
+text = text.replace('renderSlotHighlightBack', 'extractSlotHighlightBack')
+text = text.replace('renderSlotHighlightFront', 'extractSlotHighlightFront')
+p.write_text(text)
+
 # 26.2 Loom expects access wideners in the official namespace.
 # SpectatorPlus already uses Mojang/official class and member names, so update the namespace header.
 p = root/'fabric/fabric-core/src/main/resources/spectatorplus.accesswidener'
