@@ -171,6 +171,17 @@ text = re.sub(r'\n        if \(SpectatorClientMod\.config\.keybindsOpenMenu.*?\n
 text = re.sub(r'\n    private static void selectInMenu\(Minecraft mc, UUID uuid\) \{.*?\n    \}\n(?=\})', '\n', text, flags=re.S)
 p.write_text(text)
 
+# Inventory key handling now opens screens through the Gui owner.
+p = client_root/'com/hpfxd/spectatorplus/fabric/client/mixin/MinecraftMixin.java'
+text = p.read_text()
+text = text.replace('import net.minecraft.client.Minecraft;\n',
+                    'import net.minecraft.client.Minecraft;\nimport net.minecraft.client.gui.Gui;\n')
+text = text.replace('target = "Lnet/minecraft/client/Minecraft;setScreen(Lnet/minecraft/client/gui/screens/Screen;)V", ordinal = 1',
+                    'target = "Lnet/minecraft/client/gui/Gui;setScreen(Lnet/minecraft/client/gui/screens/Screen;)V"')
+text = text.replace('private boolean spectatorplus$requestSpectatorInventoryOpen(Minecraft instance, Screen guiScreen)',
+                    'private boolean spectatorplus$requestSpectatorInventoryOpen(Gui instance, Screen guiScreen)')
+p.write_text(text)
+
 # 26.2 Loom expects access wideners in the official namespace.
 # SpectatorPlus already uses Mojang/official class and member names, so update the namespace header.
 p = root/'fabric/fabric-core/src/main/resources/spectatorplus.accesswidener'
