@@ -62,6 +62,17 @@ s = s.replace('modImplementation("com.terraformersmc:modmenu:${property("modmenu
 s = re.sub(r'\n\s*remapJar \{.*?\n\s*\}\n', '\n', s, flags=re.S)
 p.write_text(s)
 
+# Fabric API 26.2 renamed directional payload registries and world-tick events.
+p = root/'fabric/fabric-core/src/main/java/com/hpfxd/spectatorplus/fabric/sync/SyncPackets.java'
+s = p.read_text()
+s = s.replace('PayloadTypeRegistry.playC2S()', 'PayloadTypeRegistry.serverboundPlay()')
+s = s.replace('PayloadTypeRegistry.playS2C()', 'PayloadTypeRegistry.clientboundPlay()')
+p.write_text(s)
+
+p = root/'fabric/fabric-core/src/main/java/com/hpfxd/spectatorplus/fabric/sync/handler/HotbarSyncHandler.java'
+s = p.read_text().replace('ServerTickEvents.END_WORLD_TICK', 'ServerTickEvents.END_LEVEL_TICK')
+p.write_text(s)
+
 # 26.2 Loom expects access wideners in the official namespace.
 # SpectatorPlus already uses Mojang/official class and member names, so update the namespace header.
 p = root/'fabric/fabric-core/src/main/resources/spectatorplus.accesswidener'
