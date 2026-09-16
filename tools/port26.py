@@ -163,6 +163,14 @@ p = client_root/'com/hpfxd/spectatorplus/fabric/client/mixin/ExperienceBarRender
 text = p.read_text().replace('public class ExperienceBarMixin', 'public class ExperienceBarRendererMixin')
 p.write_text(text)
 
+# SpectatorGui moved behind private HUD state in 26.2. Player switching works
+# directly through the teleport packet, so remove only the optional vanilla-menu highlight.
+p = client_root/'com/hpfxd/spectatorplus/fabric/client/SpectatorKeybinds.java'
+text = p.read_text()
+text = re.sub(r'\n        if \(SpectatorClientMod\.config\.keybindsOpenMenu.*?\n        \}', '', text, flags=re.S)
+text = re.sub(r'\n    private static void selectInMenu\(Minecraft mc, UUID uuid\) \{.*?\n    \}\n(?=\})', '\n', text, flags=re.S)
+p.write_text(text)
+
 # 26.2 Loom expects access wideners in the official namespace.
 # SpectatorPlus already uses Mojang/official class and member names, so update the namespace header.
 p = root/'fabric/fabric-core/src/main/resources/spectatorplus.accesswidener'
