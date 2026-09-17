@@ -110,6 +110,9 @@ for old, new in {
 text = text.replace(' && !this.minecraft.options.hideGui', '')
 text = text.replace('.renderItem(', '.item(')
 text = text.replace('.drawString(', '.text(')
+# Removed from Hud in 26.2; both declarations were unused by BetterPOV.
+text = text.replace('    @Shadow protected abstract void renderPortalOverlay(GuiGraphicsExtractor guiGraphics, float intensity);\n', '')
+text = text.replace('    @Shadow @Final private SpectatorGui spectatorGui;\n', '')
 p.write_text(text)
 
 # Screen extraction method renames.
