@@ -107,6 +107,7 @@ for old, new in {
     'renderFood': 'extractFood',
 }.items():
     text = text.replace(old, new)
+text = text.replace('SpectatorGui;renderHotbar', 'SpectatorGui;extractHotbar')
 text = text.replace(' && !this.minecraft.options.hideGui', '')
 text = text.replace('.renderItem(', '.item(')
 text = text.replace('.drawString(', '.text(')
