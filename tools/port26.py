@@ -198,7 +198,15 @@ p.write_text(text)
 # The old manual arm submit path is disabled above; do not apply its stale accessor.
 p = root/'fabric/fabric-core/src/client/resources/spectatorplus.client.mixins.json'
 data = json.loads(p.read_text())
-data['client'] = [name for name in data['client'] if name not in {'ItemInHandRendererAccessor', 'GameRendererMixin', 'ScreenEffectRendererMixin'}]
+data['client'] = [name for name in data['client'] if name not in {
+    'ItemInHandRendererAccessor',
+    'GameRendererMixin',
+    'ScreenEffectRendererMixin',
+    # 26.2 removed the old destroyBlockProgress hook. This mixin only reset
+    # the optional first-person mining cooldown animation; sync data is unaffected.
+    'LevelRendererMixin',
+    'LevelRendererAccessor',
+}]
 p.write_text(json.dumps(data, indent=2) + '\n')
 
 # 26.2 Loom expects access wideners in the official namespace.
