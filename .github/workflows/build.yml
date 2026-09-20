@@ -33,6 +33,10 @@ jobs:
         working-directory: source
         run: python3 ../tools/menu_sync_gate.py
 
+      - name: Remove redundant top-right armor overlay
+        working-directory: source
+        run: python3 ../tools/remove_armor_overlay.py
+
       - name: Add BetterPOV automatic spectator switching
         working-directory: source
         run: |
