@@ -57,9 +57,27 @@ text = replace_method(text, "    public void onPlayerOpenInventory(Player target
     }""")
 
 text = replace_method(text, "    public void onOpen(InventoryOpenEvent event)", """    public void onOpen(InventoryOpenEvent event) {
-        // Paper events alone cannot prove that the target has BetterPOV Fabric.
-        // Wait for ServerboundOpenedInventorySyncPacket from the target client so
-        // vanilla targets never create blank or stuck mirrored menus.
+        if (this.ignoreInventoryEvents || !(event.getPlayer() instanceof final Player target)) {
+            return;
+        }
+
+        // Real containers use Paper lifecycle events. Require the target's registered
+        // BetterPOV channel so vanilla targets never create blank mirrored menus.
+        if (!this.hasScreenSyncClient(target)) {
+            return;
+        }
+
+        try {
+            this.ignoreInventoryEvents = true;
+            for (final Player spectator : this.plugin.getSyncController().getSpectators(target, PERMISSION)) {
+                if (!this.canOverrideSpectatorView(spectator, spectator.getOpenInventory())) {
+                    continue;
+                }
+                this.openSyncedContainer(spectator, event.getView());
+            }
+        } finally {
+            this.ignoreInventoryEvents = false;
+        }
     }""")
 
 text = replace_method(text, "    public void onStartSpectating(PlayerStartSpectatingEntityEvent event)", """    public void onStartSpectating(PlayerStartSpectatingEntityEvent event) {
