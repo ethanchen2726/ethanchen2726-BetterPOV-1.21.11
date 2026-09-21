@@ -8,9 +8,8 @@ path = Path(
 text = path.read_text()
 
 old = """    public void onOpen(InventoryOpenEvent event) {
-        // Paper events alone cannot prove that the target has BetterPOV Fabric.
-        // Wait for ServerboundOpenedInventorySyncPacket from the target client so
-        // vanilla targets never create blank or stuck mirrored menus.
+        // Wait for the target Fabric client's authoritative opened packet.
+        // Vanilla targets must never create blank or stuck mirrored menus.
     }
 """
 
