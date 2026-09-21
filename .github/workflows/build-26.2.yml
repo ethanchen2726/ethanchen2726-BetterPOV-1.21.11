@@ -7,6 +7,7 @@ on:
     paths:
       - 'tools/port26.py'
       - 'tools/menu_sync_gate.py'
+      - 'tools/fix_container_event_lifecycle.py'
       - 'tools/remove_armor_overlay.py'
       - 'tools/fix_container_contents.py'
       - 'tools/fix_screen_tick_npe.py'
@@ -40,6 +41,10 @@ jobs:
       - name: Gate menu sync on the target Fabric client
         working-directory: source
         run: python3 ../tools/menu_sync_gate.py
+
+      - name: Restore real container open and close lifecycle
+        working-directory: source
+        run: python3 ../tools/fix_container_event_lifecycle.py
 
       - name: Remove redundant top-right armor overlay
         working-directory: source
